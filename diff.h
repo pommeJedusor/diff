@@ -3,7 +3,9 @@
 # define DIFF_H
 
 # include <stdlib.h>
+
 # include "split.h"
 # include "td_grid.h"
+# include "compare.h"
 
 #endif

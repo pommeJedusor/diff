@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include "diff.h"
 
 int	count_char(char *src, char c)
 {

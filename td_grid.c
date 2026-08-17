@@ -15,7 +15,7 @@ t_2d_grid	*free_2d_grid(t_2d_grid *grid)
 	return (grid);
 }
 
-void	initialise_2d_grid(t_2d_grid *grid)
+void	initialise_2d_grid(t_2d_grid *grid, int default_value)
 {
 	int	x;
 	int	y;
@@ -26,14 +26,14 @@ void	initialise_2d_grid(t_2d_grid *grid)
 		x = 0;
 		while (x < grid->width)
 		{
-			grid->grid[y][x] = 0;
+			grid->grid[y][x] = default_value;
 			x++;
 		}
 		y++;
 	}
 }
 
-t_2d_grid	make_2d_grid(int width, int height)
+t_2d_grid	make_2d_grid(int width, int height, int default_value)
 {
 	t_2d_grid	grid;
 	int			i;
@@ -51,7 +51,7 @@ t_2d_grid	make_2d_grid(int width, int height)
 			return (*free_2d_grid(&grid));
 		i++;
 	}
-	initialise_2d_grid(&grid);
+	initialise_2d_grid(&grid, default_value);
 	return (grid);
 }
 
