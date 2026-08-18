@@ -8,6 +8,7 @@
 # include "td_grid.h"
 # include "split.h"
 # include "math.h"
+# include "compare_lines.h"
 
 void	compare_strings(char *a, char *b);
 

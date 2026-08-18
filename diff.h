@@ -9,5 +9,6 @@
 # include "compare.h"
 # include "math.h"
 # include "string.h"
+# include "compare_lines.h"
 
 #endif
