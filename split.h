@@ -3,6 +3,7 @@
 # define SPLIT_H
 
 # include <stdlib.h>
+
 # include "string.h"
 
 char	**split(char *src, char c);
