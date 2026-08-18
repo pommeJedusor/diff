@@ -31,29 +31,29 @@ void	print_diff(char **lines_a, char **lines_b, bool *are_lines_same[2])
 
 void	compare_strings(char *a, char *b)
 {
-	char		**a_lines;
-	char		**b_lines;
+	char		**lines_a;
+	char		**lines_b;
 	bool		*are_lines_same[2];
 
-	a_lines = split(a, '\n');
-	if (a_lines == NULL)
+	lines_a = split(a, '\n');
+	if (lines_a == NULL)
 		return ;
-	b_lines = split(b, '\n');
-	if (b_lines == NULL)
+	lines_b = split(b, '\n');
+	if (lines_b == NULL)
 	{
-		free_lines(a_lines);
+		free_lines(lines_a);
 		return ;
 	}
-	if (get_diff(a_lines, b_lines, are_lines_same) == -1)
+	if (get_diff(lines_a, lines_b, are_lines_same) == -1)
 	{
-		free_lines(a_lines);
-		free_lines(b_lines);
+		free_lines(lines_a);
+		free_lines(lines_b);
 		return ;
 	}
 	printf("<-- input 1 -->\n%s\n<-- end input 1 -->\n", a);
 	printf("<-- input 2 -->\n%s\n<-- end input 2 -->\n<-- output -->\n", b);
-	print_diff(a_lines, b_lines, are_lines_same);
+	print_diff(lines_a, lines_b, are_lines_same);
 	printf("<-- end output -->\n");
-	free_lines(a_lines);
-	free_lines(b_lines);
+	free_lines(lines_a);
+	free_lines(lines_b);
 }
