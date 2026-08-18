@@ -1,56 +1,34 @@
 #include "diff.h"
 
-int	get_lines_length(char **lines)
+void	compare_lines_cell(t_2d_grid *td_grid, int x, int y, void *liness)
 {
-	int	i;
+	char	**a;
+	char	**b;
+	int		**grid;
 
-	i = 0;
-	while (lines[i] != NULL)
-		i++;
-	return (i);
-}
-
-int	min(int a, int b)
-{
-	if (a < b)
-		return (a);
-	return (b);
-}
-
-int	is_in_bounds(int x, int y, t_2d_grid *grid)
-{
-	return (x > 0 && x < grid->width && y > 0 && y < grid->height);
+	a = ((char ***)liness)[0];
+	b = ((char ***)liness)[1];
+	grid = td_grid->grid;
+	if (is_in_bounds(x, y + 1, td_grid))
+		grid[y + 1][x] = min(grid[y + 1][x], grid[y][x] + 1);
+	if (is_in_bounds(x + 1, y, td_grid))
+		grid[y][x + 1] = min(grid[y][x + 1], grid[y][x] + 1);
+	if (is_in_bounds(x + 1, y + 1, td_grid) && strcmp(a[x], b[y]) == 0)
+		grid[y + 1][x + 1] = min(grid[y + 1][x + 1], grid[y][x]);
 }
 
 void	compare_lines(char **a, char **b, t_2d_grid *td_grid)
 {
-	int	y;
-	int	x;
-	int	**grid;
+	char	**liness[2];
 
 	td_grid->grid[0][0] = 0;
-	grid = td_grid->grid;
-	y = 0;
-	while (y < td_grid->height)
-	{
-		x = 0;
-		while (x < td_grid->width)
-		{
-			if (y + 1 != td_grid->height)
-				grid[y + 1][x] = min(grid[y + 1][x], grid[y][x] + 1);
-			if (x + 1 != td_grid->width)
-				grid[y][x + 1] = min(grid[y][x + 1], grid[y][x] + 1);
-			if (is_in_bounds(x + 1, y + 1, td_grid) && strcmp(a[x], b[y]) == 0)
-				grid[y + 1][x + 1] = min(grid[y + 1][x + 1], grid[y][x]);
-			else if (is_in_bounds(x + 1, y + 1, td_grid))
-				grid[y + 1][x + 1] = min(grid[y + 1][x + 1], grid[y][x] + 1);
-			x++;
-		}
-		y++;
-	}
+	liness[0] = a;
+	liness[1] = b;
+	apply_to_ever_cell(td_grid, &compare_lines_cell, (void *)liness);
 }
 
-void	free_compare_datas(char **lines_a, char **lines_b, t_2d_grid *grid, bool *are_lines_same[2])
+void	free_compare_datas(char **lines_a, char **lines_b,
+		t_2d_grid *grid, bool *are_lines_same[2])
 {
 	free_lines(lines_a);
 	free_lines(lines_b);
@@ -63,27 +41,29 @@ void	fill_are_lines_same(t_2d_grid *grid, bool *are_lines_same[2])
 {
 	int	y;
 	int	x;
-	int	move_values[3];
+	int	left_value;
+	int	up_value;
+	int	up_left_value;
 
 	x = grid->width - 1;
 	y = grid->height - 1;
 	while (x != 0 || y != 0)
 	{
-		move_values[0] = INT_MAX;
-		move_values[1] = INT_MAX;
-		move_values[2] = INT_MAX;
+		left_value = INT_MAX;
+		up_value = INT_MAX;
+		up_left_value = INT_MAX;
 		if (x > 0 && grid->grid[y][x - 1] == grid->grid[y][x] - 1)
-			move_values[0] = grid->grid[y][x - 1];
+			left_value = grid->grid[y][x - 1];
 		if (y > 0 && grid->grid[y - 1][x] == grid->grid[y][x] - 1)
-			move_values[1] = grid->grid[y - 1][x];
+			up_value = grid->grid[y - 1][x];
 		if (y > 0 && x > 0 && grid->grid[y - 1][x - 1] == grid->grid[y][x])
-			move_values[2] = grid->grid[y - 1][x - 1];
-		if (move_values[0] <= move_values[1] && move_values[0] <= move_values[2])
+			up_left_value = grid->grid[y - 1][x - 1];
+		if (left_value <= up_value && left_value <= up_left_value)
 		{
 			are_lines_same[0][x - 1] = false;
 			x--;
 		}
-		else if (move_values[1] <= move_values[2])
+		else if (up_value <= up_left_value)
 		{
 			are_lines_same[1][y - 1] = false;
 			y--;
@@ -141,7 +121,8 @@ void	print_diff(char **lines_a, char **lines_b, bool *are_lines_same[2])
 			printf(">%s\n", lines_b[y]);
 			y++;
 		}
-		while (lines_a[x] != NULL && lines_b[y] != NULL && are_lines_same[0][x] && are_lines_same[1][y])
+		while (lines_a[x] != NULL && lines_b[y] != NULL
+			&& are_lines_same[0][x] && are_lines_same[1][y])
 		{
 			printf(" %s\n", lines_b[y]);
 			x++;
@@ -166,17 +147,13 @@ void	compare_strings(char *a, char *b)
 	are_lines_same[0] = malloc(sizeof(bool) * grid.width);
 	are_lines_same[1] = malloc(sizeof(bool) * grid.height);
 	if (a_lines == NULL || b_lines == NULL || grid.grid == NULL
-			|| are_lines_same[0] == NULL || are_lines_same[1] == NULL)
+		|| are_lines_same[0] == NULL || are_lines_same[1] == NULL)
 	{
 		free_compare_datas(a_lines, b_lines, &grid, are_lines_same);
 		return ;
 	}
 	compare_lines(a_lines, b_lines, &grid);
 	fill_are_lines_same(&grid, are_lines_same);
-	//printf("grid:\n");
-	//print_2d_grid(&grid);
-	//printf("are_lines_same:\n");
-	//print_are_lines_same(&grid, are_lines_same);
 	printf("<-- input 1 -->\n%s\n", a);
 	printf("<-- end input 1 -->\n");
 	printf("<-- input 2 -->\n%s\n", b);

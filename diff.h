@@ -7,5 +7,7 @@
 # include "split.h"
 # include "td_grid.h"
 # include "compare.h"
+# include "math.h"
+# include "string.h"
 
 #endif
