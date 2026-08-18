@@ -4,7 +4,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <limits.h>
-# include <string.h>
+# include <ft_string.h>
 
 # include "td_grid.h"
 # include "split.h"

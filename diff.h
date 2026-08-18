@@ -11,7 +11,7 @@
 # include "td_grid.h"
 # include "compare.h"
 # include "math.h"
-# include "string.h"
+# include "ft_string.h"
 # include "compare_lines.h"
 
 #endif
