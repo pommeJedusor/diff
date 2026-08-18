@@ -10,7 +10,9 @@
 # include "split.h"
 # include "math.h"
 # include "compare_lines.h"
+# include "get_file_content.h"
 
 void	compare_strings(char *a, char *b);
+void	compare_files(char *file_name_a, char *file_name_b);
 
 #endif

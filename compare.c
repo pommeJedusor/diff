@@ -50,10 +50,27 @@ void	compare_strings(char *a, char *b)
 		free_lines(lines_b);
 		return ;
 	}
-	printf("<-- input 1 -->\n%s\n<-- end input 1 -->\n", a);
-	printf("<-- input 2 -->\n%s\n<-- end input 2 -->\n<-- output -->\n", b);
 	print_diff(lines_a, lines_b, are_lines_same);
-	printf("<-- end output -->\n");
 	free_lines(lines_a);
 	free_lines(lines_b);
+	free(are_lines_same[0]);
+	free(are_lines_same[1]);
+}
+
+void	compare_files(char *file_name_a, char *file_name_b)
+{
+	char	*file_content_a;
+	char	*file_content_b;
+
+	file_content_a = get_file_content(file_name_a);
+	file_content_b = get_file_content(file_name_b);
+	if (file_content_a == NULL || file_content_b == NULL)
+	{
+		free(file_content_a);
+		free(file_content_b);
+		return ;
+	}
+	compare_strings(file_content_a, file_content_b);
+	free(file_content_a);
+	free(file_content_b);
 }
